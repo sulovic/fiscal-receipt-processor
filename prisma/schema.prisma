@@ -1,0 +1,19 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+}
+
+model FiscalReceipt {
+    id                   Int      @id @default(autoincrement())
+    receiptNumber        String   @unique
+    nameSurname          String
+    address              String
+    externalLink         String   @unique
+    dateReceiptCollected DateTime @default(now())
+    dateSent             DateTime
+
+    @@index([receiptNumber, nameSurname, address])
+}

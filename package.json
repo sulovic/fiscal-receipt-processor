@@ -1,0 +1,44 @@
+{
+  "name": "fiscal-receipt-processor",
+  "version": "1.0.0",
+  "author": "Vladimir Šulović",
+  "email": "sulovic@gmail.com",
+  "license": "MIT",
+  "description": "Background API for processing fiscal receipts",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "npm run dev:watch",
+    "dev:esbuild": "esbuild \"src/**/*.ts\" --outdir=dist --outbase=src --format=esm --platform=node --target=node20 --sourcemap --watch --log-level=info",
+    "dev:watch": "concurrently \"npm:dev:esbuild\" \"nodemon --watch dist/server.js --ext js --exec \\\"node --enable-source-maps dist/server.js\\\"\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint 'src/**/*.{ts,js}'",
+    "lint:fix": "eslint 'src/**/*.{ts,js}' --fix",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.4.0",
+    "@prisma/client": "^7.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "prisma": "^7.4.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.27.3",
+    "eslint": "^9.39.1",
+    "globals": "^15.14.0",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.9.3"
+  }
+}
