@@ -1,19 +1,20 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
-    provider = "mysql"
+  provider = "postgresql"
 }
 
 model FiscalReceipt {
-    id                   Int      @id @default(autoincrement())
-    receiptNumber        String   @unique
-    nameSurname          String
-    address              String
-    externalLink         String   @unique
-    dateReceiptCollected DateTime @default(now())
-    dateSent             DateTime
+  id                   Int      @id @default(autoincrement())
+  receiptNumber        String   @unique
+  nameSurname          String
+  address              String
+  externalLink         String   @unique
+  dateReceiptCollected DateTime @default(now())
+  dateSent             DateTime
 
-    @@index([receiptNumber, nameSurname, address])
+  @@index([receiptNumber, nameSurname, address])
 }

@@ -1,16 +1,16 @@
 import "dotenv/config";
-import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { envSchema } from "./schemas/schemas.js";
-
 import corsConfig from "./config/cors.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 import verifyAccessToken from "./middleware/verifyAccessToken.js";
 import checkUserRole from "./middleware/checkUserRole.js";
 
 // Routers
+
+import racunRouter from "./routers/racun.js";
 
 envSchema.parse(process.env);
 
