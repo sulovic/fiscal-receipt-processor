@@ -1,7 +1,7 @@
 import racunModel from "../models/racun.js";
 import type { Request, Response, NextFunction } from "express";
 
-const getRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+const createRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const brojRacuna = req.params.brojRacuna as string;
 
@@ -14,7 +14,7 @@ const getRacunController = async (req: Request, res: Response, next: NextFunctio
     if (!racunData) {
       return res.status(404).json({ error: "Račun ne postoji" });
     } else {
-      return res.redirect(racunData.externalLink);
+      return res.status(200).json({ data: racunData });
     }
   } catch (err) {
     next(err);
@@ -22,5 +22,5 @@ const getRacunController = async (req: Request, res: Response, next: NextFunctio
 };
 
 export default {
-  getRacunController,
+  createRacunController,
 };

@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "../../src/generated/prisma/client";
+import { PrismaClient, Prisma } from "../../src/generated/prisma/client.ts";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const connectionString = process.env.DATABASE_FISCALRECEIPTS_URL;
