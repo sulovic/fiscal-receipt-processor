@@ -7,6 +7,15 @@ export const envSchema = z.object({
   ACCESS_TOKEN_SECRET: z.string(),
 });
 
+export const queryParamsSchema = z.object({
+  sortBy: z.string().nullable().optional(),
+  sortOrder: z.enum(["asc", "desc"]).nullable().optional(),
+  limit: z.string().nullable().optional(),
+  page: z.string().nullable().optional(),
+  search: z.string().nullable().optional(),
+  filters: z.record(z.string(), z.string()).nullable().optional(),
+});
+
 export const fiscalReceiptSchema = z.object({
   id: z.number(),
   receiptNumber: z.string(),

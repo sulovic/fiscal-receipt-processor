@@ -8,7 +8,7 @@ usersRoles: {
 */
 
 const priviledgesConfig = {
-  "receipts-processor": {
+  "racuni-admin": {
     GET: 1000,
     POST: 3000,
     PUT: 3000,
