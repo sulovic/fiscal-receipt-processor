@@ -8,13 +8,14 @@ datasource db {
 }
 
 model FiscalReceipt {
-  id                   Int      @id @default(autoincrement())
-  receiptNumber        String   @unique
+  id                   Int       @id @default(autoincrement())
+  receiptNumber        String    @unique
   nameSurname          String
   address              String
-  externalLink         String   @unique
-  dateReceiptCollected DateTime @default(now())
-  dateSent             DateTime
+  phoneNumber          String
+  externalLink         String    @unique
+  dateReceiptCollected DateTime  @default(now())
+  dateSent             DateTime?
 
   @@index([receiptNumber, nameSurname, address])
 }

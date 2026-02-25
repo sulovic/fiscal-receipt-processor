@@ -6,40 +6,38 @@ import { z } from "zod";
 
 const bulkUploadRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const racuni = req.body;
+    const racuni: FiscalReceipt[] = req.body;
 
     if (!racuni) {
       return res.status(400).json({ error: "Nije poslat nijedan račun" });
     }
 
-    const bulkSchema = z.array(fiscalReceiptSchema);
-
-    const parsedRacuni = bulkSchema.parse(racuni);
-
-    if (parsedRacuni.length === 0) {
+    if (racuni.length === 0) {
       return res.status(400).json({ error: "Nije poslat nijedan račun" });
     }
 
     const uploadResults: uploadFRResult[] = await Promise.all(
-      parsedRacuni.map(async (racun) => {
+      racuni.map(async (racun) => {
         try {
-          const created = await racunModel.createReceipt(racun);
+          const parsedRacun = fiscalReceiptSchema.omit({ id: true, dateReceiptCollected: true, dateSent: true }).parse(racun);
+
+          const created = await racunModel.createReceipt(parsedRacun);
 
           return {
             receiptNumber: created.receiptNumber,
-            status: "success" as const,
+            status: "success",
           };
         } catch (error: any) {
           if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
             return {
               receiptNumber: racun.receiptNumber,
-              status: "duplicate" as const,
+              status: "duplicate",
             };
           }
 
           return {
             receiptNumber: racun.receiptNumber,
-            status: "error" as const,
+            status: "error",
             message: error instanceof Error ? error.message : "Unknown error",
           };
         }

@@ -15,8 +15,6 @@ import racunRouter from "./routers/racun.js";
 import bulkUploadRacunRouter from "./routers/bulkUploadRacun.js";
 import racuniAdminRouter from "./routers/racuniAdmin.js";
 
-console.log(process.env);
-
 envSchema.parse(process.env);
 
 const app = express();

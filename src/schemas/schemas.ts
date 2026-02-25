@@ -21,9 +21,10 @@ export const fiscalReceiptSchema = z.object({
   receiptNumber: z.string(),
   nameSurname: z.string(),
   address: z.string(),
+  phoneNumber: z.string(),
   externalLink: z.string(),
   dateReceiptCollected: z.date().optional(),
-  dateSent: z.date(),
+  dateSent: z.date().optional(),
 });
 
 export const uploadFRResultSchema = z.object({
