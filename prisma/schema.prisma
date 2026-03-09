@@ -10,6 +10,8 @@ datasource db {
 model FiscalReceipt {
   id                   Int       @id @default(autoincrement())
   receiptNumber        String    @unique
+  receiptIssueDate     DateTime
+  country              Countries
   nameSurname          String
   address              String
   phoneNumber          String
@@ -18,4 +20,9 @@ model FiscalReceipt {
   dateSent             DateTime?
 
   @@index([receiptNumber, nameSurname, address])
+}
+
+enum Countries {
+  SRBIJA
+  CRNA_GORA
 }

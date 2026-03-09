@@ -13,12 +13,17 @@ export const queryParamsSchema = z.object({
   limit: z.string().nullable().optional(),
   page: z.string().nullable().optional(),
   search: z.string().nullable().optional(),
-  filters: z.record(z.string(), z.string()).nullable().optional(),
+  filters: z
+    .record(z.string(), z.union([z.string(), z.array(z.string())]))
+    .nullable()
+    .optional(),
 });
 
 export const fiscalReceiptSchema = z.object({
   id: z.number(),
   receiptNumber: z.string(),
+  receiptIssueDate: z.date(),
+  country: z.enum(["SRBIJA", "CRNA_GORA"]),
   nameSurname: z.string(),
   address: z.string(),
   phoneNumber: z.string(),

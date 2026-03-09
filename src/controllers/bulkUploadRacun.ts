@@ -1,16 +1,13 @@
 import racunModel from "../models/racun.js";
 import type { Request, Response, NextFunction } from "express";
 import { fiscalReceiptSchema } from "../schemas/schemas.js";
-import { Prisma } from "../../src/generated/prisma/client.ts";
+import { Prisma } from "../../src/generated/prisma/client.js";
 import { z } from "zod";
 
 const bulkUploadRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const racuni: FiscalReceipt[] = req.body;
-
-    if (!racuni) {
-      return res.status(400).json({ error: "Nije poslat nijedan račun" });
-    }
+    // validate that the body is a non-empty array of fiscal receipts
+    const racuni = z.array(fiscalReceiptSchema.omit({ id: true, dateReceiptCollected: true, dateSent: true })).parse(req.body);
 
     if (racuni.length === 0) {
       return res.status(400).json({ error: "Nije poslat nijedan račun" });

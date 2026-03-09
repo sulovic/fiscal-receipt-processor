@@ -10,19 +10,23 @@ const getAllRacuniController = async (req: Request, res: Response, next: NextFun
     const { sortBy, sortOrder, limit, page, search, filters } = queryParams;
 
     // default limit to 100 and page to 1 if not provided
-    const limitNum = parseInt(limit || "100", 10);
-    const pageNum = parseInt(page || "1", 10);
+    let limitNum = Number.parseInt(limit || "100", 10);
+    if (Number.isNaN(limitNum) || limitNum <= 0) limitNum = 100;
+
+    let pageNum = Number.parseInt(page || "1", 10);
+    if (Number.isNaN(pageNum) || pageNum <= 0) pageNum = 1;
 
     const take = limitNum;
     const skip = (pageNum - 1) * limitNum;
 
-    const orderBy = sortBy ? { [sortBy]: sortOrder || "desc" } : { ["idReklamacije"]: sortOrder || "desc" };
+    const orderBy = sortBy ? { [sortBy]: sortOrder || "desc" } : { ["id"]: sortOrder || "desc" };
 
-    const andConditions: Prisma.ReklamacijeWhereInput[] = [];
-    const orConditions: Prisma.ReklamacijeWhereInput[] = [];
+    const andConditions: Prisma.FiscalReceiptWhereInput[] = [];
+    const orConditions: Prisma.FiscalReceiptWhereInput[] = [];
 
-    const filterKeys = ["zemljaReklamacije", "statusReklamacije", "odgovornaOsoba", "godina"];
-    const searchKeys = ["brojReklamacije", "imePrezime", "email", "telefon", "adresa", "brojRacuna", "nazivProizvoda"];
+    // allowed filter keys; the date is handled specially below so include it here
+    const filterKeys = ["country", "receiptIssueDate"];
+    const searchKeys = ["nameSurname", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
 
     if (filters) {
       for (const key in filters) {
@@ -31,19 +35,21 @@ const getAllRacuniController = async (req: Request, res: Response, next: NextFun
           return res.status(400).json({ error: `Invalid filter key: ${key}` });
         }
 
-        if (key === "godina") {
-          const years = (Array.isArray(value) ? value : [value]).map((y: string) => Number(y));
+        if (key === "receiptIssueDate") {
+          const startOfDay = new Date(value as string);
+          startOfDay.setHours(0, 0, 0, 0);
 
-          // Convert years to date ranges
-          const yearFilters = years.map((y: number) => ({
-            datumPrijema: {
-              gte: new Date(y, 0, 1), // Jan 1, year y
-              lte: new Date(y, 11, 31), // Dec 31, year y
+          const nextDay = new Date(startOfDay);
+          nextDay.setDate(nextDay.getDate() + 1);
+
+          const dateFilter = {
+            receiptIssueDate: {
+              gte: startOfDay,
+              lt: nextDay,
             },
-          }));
+          };
 
-          // Combine with OR (any of the years)
-          andConditions.push({ OR: yearFilters });
+          andConditions.push(dateFilter);
         } else {
           andConditions.push({ [key]: { in: Array.isArray(value) ? value : [value] } });
         }
@@ -61,18 +67,18 @@ const getAllRacuniController = async (req: Request, res: Response, next: NextFun
       );
     }
 
-    const whereClause: Prisma.ReklamacijeWhereInput = {
+    const whereClause: Prisma.FiscalReceiptWhereInput = {
       AND: [...andConditions, orConditions.length > 0 ? { OR: orConditions } : {}],
     };
 
-    const reklamacijeData = await reklamacijeModel.getAllReklamacije({
+    const receipts = await racuniModel.getAllReceipts({
       whereClause,
       orderBy,
       take,
       skip,
     });
 
-    return res.status(200).json({ data: reklamacijeData });
+    return res.status(200).json({ data: receipts });
   } catch (err) {
     next(err);
   }
@@ -84,11 +90,12 @@ const getAllRacuniCountController = async (req: Request, res: Response, next: Ne
 
     const { search, filters } = queryParams;
 
-    const andConditions: Prisma.ReklamacijeWhereInput[] = [];
-    const orConditions: Prisma.ReklamacijeWhereInput[] = [];
+    const andConditions: Prisma.FiscalReceiptWhereInput[] = [];
+    const orConditions: Prisma.FiscalReceiptWhereInput[] = [];
 
-    const filterKeys = ["zemljaReklamacije", "statusReklamacije", "odgovornaOsoba", "godina"];
-    const searchKeys = ["brojReklamacije", "imePrezime", "email", "telefon", "adresa", "brojRacuna", "nazivProizvoda"];
+    // match the allowed filters above
+    const filterKeys = ["country", "receiptIssueDate"];
+    const searchKeys = ["nameSurname", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
 
     if (filters) {
       for (const key in filters) {
@@ -97,19 +104,21 @@ const getAllRacuniCountController = async (req: Request, res: Response, next: Ne
           return res.status(400).json({ error: `Invalid filter key: ${key}` });
         }
 
-        if (key === "godina") {
-          const years = (Array.isArray(value) ? value : [value]).map((y: string) => Number(y));
+        if (key === "receiptIssueDate") {
+          const startOfDay = new Date(value as string);
+          startOfDay.setHours(0, 0, 0, 0);
 
-          // Convert years to date ranges
-          const yearFilters = years.map((y: number) => ({
-            datumPrijema: {
-              gte: new Date(y, 0, 1), // Jan 1, year y
-              lte: new Date(y, 11, 31), // Dec 31, year y
+          const nextDay = new Date(startOfDay);
+          nextDay.setDate(nextDay.getDate() + 1);
+
+          const dateFilter = {
+            receiptIssueDate: {
+              gte: startOfDay,
+              lt: nextDay,
             },
-          }));
+          };
 
-          // Combine with OR (any of the years)
-          andConditions.push({ OR: yearFilters });
+          andConditions.push(dateFilter);
         } else {
           andConditions.push({ [key]: { in: Array.isArray(value) ? value : [value] } });
         }
@@ -131,7 +140,7 @@ const getAllRacuniCountController = async (req: Request, res: Response, next: Ne
       AND: [...andConditions, orConditions.length > 0 ? { OR: orConditions } : {}],
     };
 
-    const reklamacijeCount = await reklamacijeModel.getAllReklamacijeCount({ whereClause });
+    const reklamacijeCount = await racuniModel.getAllReceiptsCount({ whereClause });
     return res.status(200).json({ count: reklamacijeCount });
   } catch (err) {
     next(err);
@@ -160,7 +169,7 @@ const getRacunController = async (req: Request, res: Response, next: NextFunctio
 
 const createRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const parsedReceipt = fiscalReceiptSchema.omit({ id: true }).parse(req.body);
+    const parsedReceipt = fiscalReceiptSchema.omit({ id: true, dateReceiptCollected: true, dateSent: true }).parse(req.body);
 
     const createdReceipt = await racuniModel.createReceipt(parsedReceipt);
 
@@ -172,20 +181,17 @@ const createRacunController = async (req: Request, res: Response, next: NextFunc
 
 const updateRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const idReklamacije: number = parseInt(req.params.idReklamacije);
+    const receiptNumber = req.params.brojRacuna as string;
 
-    if (isNaN(idReklamacije)) {
-      return res.status(400).json({ error: "Invalid reklamacija ID" });
+    if (!receiptNumber) {
+      return res.status(400).json({ error: "Nije poslat broj računa" });
     }
 
-    const parsedReklamacija = reklamacijaSchema.omit({ idReklamacije: true }).parse(req.body);
+    const parsedReceipt = fiscalReceiptSchema.omit({ id: true, dateReceiptCollected: true, dateSent: true }).parse(req.body);
 
-    // convert files null to Prisma.JsonNull
-    const prismaParsedReklamacija: Prisma.ReklamacijeUpdateInput = { ...parsedReklamacija, files: parsedReklamacija.files ?? Prisma.JsonNull };
+    const updatedReceipt = await racuniModel.updateReceipt(receiptNumber, parsedReceipt);
 
-    const updatedReklamacija = await reklamacijeModel.updateReklamacija(idReklamacije, prismaParsedReklamacija);
-
-    return res.status(200).json({ message: "Reklamacija updated", data: updatedReklamacija });
+    return res.status(200).json({ message: "Račun ažuriran", data: updatedReceipt });
   } catch (err) {
     next(err);
   }
@@ -193,15 +199,15 @@ const updateRacunController = async (req: Request, res: Response, next: NextFunc
 
 const deleteRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const idReklamacije: number = parseInt(req.params.idReklamacije);
+    const receiptNumber = req.params.brojRacuna as string;
 
-    if (isNaN(idReklamacije)) {
-      return res.status(400).json({ error: "Invalid JCI ID" });
+    if (!receiptNumber) {
+      return res.status(400).json({ error: "Nije poslat broj računa" });
     }
 
-    const deletedReklamacija = await reklamacijeModel.deleteReklamacija(idReklamacije);
+    const deletedReceipt = await racuniModel.deleteReceipt(receiptNumber);
 
-    return res.status(200).json({ message: "Reklamacija deleted", data: deletedReklamacija });
+    return res.status(200).json({ message: "Račun obrisan", data: deletedReceipt });
   } catch (err) {
     next(err);
   }
@@ -209,6 +215,7 @@ const deleteRacunController = async (req: Request, res: Response, next: NextFunc
 
 export default {
   getAllRacuniController,
+  getAllRacuniCountController,
   getRacunController,
   createRacunController,
   updateRacunController,

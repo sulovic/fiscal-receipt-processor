@@ -3,11 +3,11 @@ import racuniAdminController from "../controllers/racuniAdmin.js";
 
 const router = express.Router();
 
-// router.get("/", racuniAdminController.getAllRacuniController);
-// router.get("/count", racuniAdminController.getAllRacuniCountController);
-// router.get("/:userId", racuniAdminController.getRacunController);
-// router.post("/", racuniAdminController.createRacunController);
-// router.put("/:userId", racuniAdminController.updateRacunController);
-// router.delete("/:userId", racuniAdminController.deleteRacunController);
+router.get("/", racuniAdminController.getAllRacuniController);
+router.get("/count", racuniAdminController.getAllRacuniCountController);
+router.get("/:brojRacuna", racuniAdminController.getRacunController);
+router.post("/", racuniAdminController.createRacunController);
+router.put("/:brojRacuna", racuniAdminController.updateRacunController);
+router.delete("/:brojRacuna", racuniAdminController.deleteRacunController);
 
 export default router;
