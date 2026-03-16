@@ -45,13 +45,10 @@ RUN npm ci --omit=dev
 # Copy built output
 COPY --from=builder /usr/src/app/dist ./dist
 
-# Copy built Prisma clients
-COPY --from=builder /usr/src/app/prisma_clients ./prisma_clients
-
 # Runtime port (you can override with -p or env)
 ARG PORT
 ENV PORT=$PORT
 
 EXPOSE $PORT
 
-CMD ["pm2-runtime", "./dist/server.js", "--name", "shoppy-apps-backend"]
+CMD ["pm2-runtime", "./dist/server.js", "--name", "fiscal-receipt-processor"]

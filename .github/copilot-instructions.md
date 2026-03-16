@@ -2,14 +2,14 @@
 
 # Fiscal Receipt Processor API
 
-This is a Node.js Express API for processing fiscal receipts, built with Prisma ORM connecting to a MySQL database.
+This is a Node.js Express API for processing fiscal receipts, built with Prisma ORM connecting to a PostrgeSQL database.
 
 ## Tech Stack
 
 - Node.js (latest LTS)
 - Express.js
 - Prisma ORM
-- MySQL database
+- PostrgeSQL database
 - Development: nodemon
 
 ## Project Structure
@@ -17,7 +17,7 @@ This is a Node.js Express API for processing fiscal receipts, built with Prisma 
 - `src/app.js`: Main application file with Express server and API routes
 - `prisma/schema.prisma`: Database schema definition
 - `prisma.config.ts`: Prisma configuration
-- `.env`: Environment variables (DATABASE_URL for MySQL)
+- `.env`: Environment variables (DATABASE_URL for PostrgeSQL)
 - `package.json`: Dependencies and scripts
 
 ## API Endpoints
@@ -70,8 +70,8 @@ Retrieves and redirects to the external fiscal receipt link.
    ```
 
 2. **Configure database:**
-   - Update `.env` with your MySQL DATABASE_URL
-   - Example: `DATABASE_URL="mysql://user:password@host:port/database"`
+   - Update `.env` with your PostrgeSQL DATABASE_URL
+   - Example: `DATABASE_URL="postgresql://user:password@host:port/database"`
 
 3. **Run database migrations:**
 

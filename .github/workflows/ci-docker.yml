@@ -1,0 +1,112 @@
+name: CI/CD Docker Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/fiscal-receipt-processor
+      NODE_ENV: production
+      DATABASE_FISCALRECEIPTS_URL: ${{ secrets.DATABASE_FISCALRECEIPTS_URL }}
+      ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      PORT: ${{ secrets.PORT }}
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: "npm"
+
+      # 3. Install dependencies and prisma client
+      - name: Install dependencies and prisma client
+        run: |
+          npm ci --include=dev
+          npm run prisma:generate:all
+
+      # 4. Run typecheck and lint
+      - name: Typecheck & Lint
+        run: |
+          npm run typecheck
+          npm run lint
+
+      # 5. Run tests
+      # To do: add run tests
+
+      # 6. Authenticate to GHCR
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 7. Build Docker image
+      - name: Build Docker image
+        run: |
+          printf "%s\n" \
+            "PORT=${{ secrets.PORT }}" \
+            "DATABASE_FISCALRECEIPTS_URL=${{ secrets.DATABASE_FISCALRECEIPTS_URL }}" \
+            "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" \
+            "SECRET_KEY=${{ secrets.SECRET_KEY }}" \
+            > .env.build
+
+          DOCKER_BUILDKIT=1 docker build \
+            --secret id=envfile,src=.env.build \
+            -t $IMAGE_NAME:latest .
+
+      - name: Remove temporary build env
+        run: rm -f .env.build
+
+      # 8. Push Docker image to GHCR
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_NAME:latest
+
+      # 9. Deploy container remote server
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Deploy container
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u sulovic --password-stdin && \
+            docker pull $IMAGE_NAME:latest && \
+            docker stop fiscal-receipt-processor || true && \
+            docker rm fiscal-receipt-processor || true && \
+            docker container prune -f && \
+            docker run -d \
+              --name fiscal-receipt-processor \
+              --restart unless-stopped \
+              --network host \
+              -e DATABASE_FISCALRECEIPTS_URL='${{ secrets.DATABASE_FISCALRECEIPTS_URL }}' \
+              -e ACCESS_TOKEN_SECRET='${{ secrets.ACCESS_TOKEN_SECRET }}' \
+              -e SECRET_KEY='${{ secrets.SECRET_KEY }}' \
+              -e PORT='${{ secrets.PORT }}' \
+              $IMAGE_NAME:latest
+          "

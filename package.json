@@ -8,8 +8,9 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node dist/server.js",
     "dev": "npm run dev:watch",
+    "build": "npm run typecheck && esbuild \"src/**/*.ts\" --outdir=dist --outbase=src --format=esm --platform=node --target=node20 --sourcemap",
     "dev:esbuild": "esbuild \"src/**/*.ts\" --outdir=dist --outbase=src --format=esm --platform=node --target=node20 --sourcemap --watch --log-level=info",
     "dev:watch": "concurrently \"npm:dev:esbuild\" \"nodemon --watch dist/server.js --ext js --exec \\\"node --enable-source-maps dist/server.js\\\"\"",
     "typecheck": "tsc --noEmit",
