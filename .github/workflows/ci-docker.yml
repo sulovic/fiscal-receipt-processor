@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies and prisma client
         run: |
           npm ci --include=dev
-          npm run prisma:generate:all
+          npm run prisma:generate
 
       # 4. Run typecheck and lint
       - name: Typecheck & Lint
