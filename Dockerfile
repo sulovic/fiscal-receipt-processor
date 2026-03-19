@@ -25,7 +25,7 @@ COPY . .
 # Secrets are loaded into env only during this RUN step
 RUN --mount=type=secret,id=envfile \
     set -a && . /run/secrets/envfile && set +a && \
-    npm run prisma:generate:all && \
+    npm run prisma:generate && \
     npm run build
 
 
