@@ -44,6 +44,7 @@ RUN npm ci --omit=dev
 
 # Copy built output
 COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/src/generated ./dist/generated
 
 # Runtime port (you can override with -p or env)
 ARG PORT
