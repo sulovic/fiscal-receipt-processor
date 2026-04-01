@@ -1,7 +1,7 @@
 import racunModel from "../models/racun.js";
 import type { Request, Response, NextFunction } from "express";
 import { fiscalReceiptSchema } from "../schemas/schemas.js";
-import { Prisma } from "../../src/generated/prisma/client.js";
+import { Prisma } from "../generated/prisma/client.js";
 import { z } from "zod";
 
 const bulkUploadRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {

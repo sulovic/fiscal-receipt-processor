@@ -1,7 +1,7 @@
 import racuniModel from "../models/racun.js";
 import type { Request, Response, NextFunction } from "express";
 import { queryParamsSchema, fiscalReceiptSchema } from "../schemas/schemas.js";
-import { Prisma } from "../../src/generated/prisma/client.js";
+import { Prisma } from "../generated/prisma/client.js";
 
 const getAllRacuniController = async (req: Request, res: Response, next: NextFunction) => {
   try {
