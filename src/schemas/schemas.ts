@@ -22,14 +22,14 @@ export const queryParamsSchema = z.object({
 export const fiscalReceiptSchema = z.object({
   id: z.number(),
   receiptNumber: z.string(),
-  receiptIssueDate: z.date(),
+  receiptIssueDate: z.coerce.date(),
   country: z.enum(["SRBIJA", "CRNA_GORA"]),
   nameSurname: z.string(),
   address: z.string(),
   phoneNumber: z.string(),
   externalLink: z.string(),
-  dateReceiptCollected: z.date().optional(),
-  dateSent: z.date().optional(),
+  dateReceiptCollected: z.coerce.date().optional(),
+  dateSent: z.coerce.date().optional(),
 });
 
 export const uploadFRResultSchema = z.object({
