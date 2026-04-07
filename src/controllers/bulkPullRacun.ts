@@ -5,14 +5,14 @@ import { Prisma } from "../generated/prisma/client.js";
 
 const bulkPullRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const googleSheetsUrl = process.env.GOOGLE_SHEETS_URL;
-    const googleSheetsToken = process.env.GOOGLE_SHEETS_TOKEN;
+    const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
+    const googleScriptToken = process.env.GOOGLE_SCRIPT_TOKEN;
 
-    if (!googleSheetsUrl || !googleSheetsToken) {
-      return res.status(500).json({ error: "Missing Google Sheets credentials" });
+    if (!googleScriptUrl || !googleScriptToken) {
+      return res.status(500).json({ error: "Missing Google Script URL or credentials" });
     }
 
-    const googleSheetsFullPath = `${googleSheetsUrl}?token=${googleSheetsToken}`;
+    const googleSheetsFullPath = `${googleScriptUrl}?token=${googleScriptToken}`;
 
     const racuni: FiscalReceipt[] = await fetch(googleSheetsFullPath).then((response) => response.json());
 
