@@ -5,6 +5,8 @@ export const envSchema = z.object({
   DATABASE_FISCALRECEIPTS_URL: z.string(),
   SECRET_KEY: z.string(),
   ACCESS_TOKEN_SECRET: z.string(),
+  GOOGLE_SCRIPT_URL: z.string(),
+  GOOGLE_SCRIPT_TOKEN: z.string(),
 });
 
 export const queryParamsSchema = z.object({

@@ -3,14 +3,18 @@ import type { Request, Response, NextFunction } from "express";
 import { fiscalReceiptSchema } from "../schemas/schemas.js";
 import { Prisma } from "../generated/prisma/client.js";
 
-const bulkUploadRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+const bulkPullRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    // validate that the body is a non-empty array of fiscal receipts
-    const racuni: FiscalReceipt[] = req.body;
+    const googleSheetsUrl = process.env.GOOGLE_SHEETS_URL;
+    const googleSheetsToken = process.env.GOOGLE_SHEETS_TOKEN;
 
-    if (racuni.length === 0) {
-      return res.status(400).json({ error: "Nije poslat nijedan račun" });
+    if (!googleSheetsUrl || !googleSheetsToken) {
+      return res.status(500).json({ error: "Missing Google Sheets credentials" });
     }
+
+    const googleSheetsFullPath = `${googleSheetsUrl}?token=${googleSheetsToken}`;
+
+    const racuni: FiscalReceipt[] = await fetch(googleSheetsFullPath).then((response) => response.json());
 
     const uploadResults: uploadFRResult[] = await Promise.all(
       racuni.map(async (racun) => {
@@ -47,5 +51,5 @@ const bulkUploadRacunController = async (req: Request, res: Response, next: Next
 };
 
 export default {
-  bulkUploadRacunController,
+  bulkPullRacunController,
 };

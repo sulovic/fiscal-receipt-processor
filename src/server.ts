@@ -13,6 +13,7 @@ import verifySecretKey from "./middleware/verifySecretKey.js";
 
 import racunRouter from "./routers/racun.js";
 import bulkUploadRacunRouter from "./routers/bulkUploadRacun.js";
+import bulkPullRacunRouter from "./routers/bulkPullRacun.js";
 import racuniAdminRouter from "./routers/racuniAdmin.js";
 
 envSchema.parse(process.env);
@@ -32,8 +33,8 @@ app.use(cookieParser());
 
 // Global rate limiter
 app.use(rateLimiter(1, 100));
-
-app.use("/obrada-racuna", verifySecretKey, bulkUploadRacunRouter);
+app.use("/bulk-pull", verifyAccessToken, bulkPullRacunRouter);
+app.use("/bulk-upload", verifySecretKey, bulkUploadRacunRouter);
 app.use("/racuni-admin", verifyAccessToken, checkUserRole, racuniAdminRouter);
 
 app.use("/", racunRouter);
