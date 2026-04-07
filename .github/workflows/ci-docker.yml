@@ -23,6 +23,8 @@ jobs:
       ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       PORT: ${{ vars.PORT }}
+      GOOGLE_SCRIPT_URL: ${{ vars.GOOGLE_SCRIPT_URL }}
+      GOOGLE_SCRIPT_TOKEN: ${{ secrets.GOOGLE_SCRIPT_TOKEN }}
 
     steps:
       # 1. Checkout code
@@ -67,6 +69,8 @@ jobs:
             "DATABASE_FISCALRECEIPTS_URL=${{ secrets.DATABASE_FISCALRECEIPTS_URL }}" \
             "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" \
             "SECRET_KEY=${{ secrets.SECRET_KEY }}" \
+            "GOOGLE_SCRIPT_URL=${{ vars.GOOGLE_SCRIPT_URL }}" \
+            "GOOGLE_SCRIPT_TOKEN=${{ secrets.GOOGLE_SCRIPT_TOKEN }}" \
             > .env.build
 
           DOCKER_BUILDKIT=1 docker build \
@@ -107,6 +111,8 @@ jobs:
               -e DATABASE_FISCALRECEIPTS_URL='${{ secrets.DATABASE_FISCALRECEIPTS_URL }}' \
               -e ACCESS_TOKEN_SECRET='${{ secrets.ACCESS_TOKEN_SECRET }}' \
               -e SECRET_KEY='${{ secrets.SECRET_KEY }}' \
+              -e GOOGLE_SCRIPT_URL='${{ vars.GOOGLE_SCRIPT_URL }}' \
+              -e GOOGLE_SCRIPT_TOKEN='${{ secrets.GOOGLE_SCRIPT_TOKEN }}' \
               -e PORT='${{ vars.PORT }}' \
               ${{ env.IMAGE_NAME }}:latest
           "
