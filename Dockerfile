@@ -42,6 +42,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm ci --omit=dev
 
+# Copy prisma migrations
+COPY --from=builder /usr/src/app/prisma ./prisma
+
 # Copy built output
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/src/generated ./dist/generated
@@ -52,4 +55,4 @@ ENV PORT=$PORT
 
 EXPOSE $PORT
 
-CMD ["pm2-runtime", "./dist/server.js", "--name", "fiscal-receipt-processor"]
+CMD ["sh", "-c", "npx prisma migrate deploy && pm2-runtime ./dist/server.js --name fiscal-receipt-processor"]

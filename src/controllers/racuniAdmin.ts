@@ -26,7 +26,7 @@ const getAllRacuniController = async (req: Request, res: Response, next: NextFun
 
     // allowed filter keys; the date is handled specially below so include it here
     const filterKeys = ["country", "receiptIssueDate"];
-    const searchKeys = ["nameSurname", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
+    const searchKeys = ["nameSurname", "shipmentNumber", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
 
     if (filters) {
       for (const key in filters) {
@@ -95,7 +95,7 @@ const getAllRacuniCountController = async (req: Request, res: Response, next: Ne
 
     // match the allowed filters above
     const filterKeys = ["country", "receiptIssueDate"];
-    const searchKeys = ["nameSurname", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
+    const searchKeys = ["nameSurname", "shipmentNumber", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
 
     if (filters) {
       for (const key in filters) {

@@ -24,6 +24,7 @@ export const queryParamsSchema = z.object({
 export const fiscalReceiptSchema = z.object({
   id: z.number(),
   receiptNumber: z.string(),
+  shipmentNumber: z.string(),
   receiptIssueDate: z.coerce.date(),
   country: z.enum(["SRBIJA", "CRNA_GORA"]),
   nameSurname: z.string(),

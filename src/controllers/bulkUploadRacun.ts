@@ -21,18 +21,27 @@ const bulkUploadRacunController = async (req: Request, res: Response, next: Next
 
           return {
             receiptNumber: created.receiptNumber,
+            shippmentNumber: created.shipmentNumber,
+            nameSurname: created.nameSurname,
+            country: created.country,
             status: "success",
           };
         } catch (error: any) {
           if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
             return {
               receiptNumber: racun.receiptNumber,
+              shippmentNumber: racun.shipmentNumber,
+              nameSurname: racun.nameSurname,
+              country: racun.country,
               status: "duplicate",
             };
           }
 
           return {
             receiptNumber: racun.receiptNumber,
+            shippmentNumber: racun.shipmentNumber,
+            nameSurname: racun.nameSurname,
+            country: racun.country,
             status: "error",
             message: error instanceof Error ? error.message : "Unknown error",
           };

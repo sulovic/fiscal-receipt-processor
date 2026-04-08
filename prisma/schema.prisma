@@ -10,6 +10,7 @@ datasource db {
 model FiscalReceipt {
   id                   Int       @id @default(autoincrement())
   receiptNumber        String    @unique
+  shipmentNumber       String
   receiptIssueDate     DateTime
   country              Countries
   nameSurname          String
