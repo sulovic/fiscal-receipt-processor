@@ -25,7 +25,7 @@ const bulkPullRacunController = async (req: Request, res: Response, next: NextFu
 
           return {
             receiptNumber: created.receiptNumber,
-            shippmentNumber: created.shipmentNumber,
+            shipmentNumber: created.shipmentNumber,
             nameSurname: created.nameSurname,
             country: created.country,
             status: "success",
@@ -34,7 +34,7 @@ const bulkPullRacunController = async (req: Request, res: Response, next: NextFu
           if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
             return {
               receiptNumber: racun.receiptNumber,
-              shippmentNumber: racun.shipmentNumber,
+              shipmentNumber: racun.shipmentNumber,
               nameSurname: racun.nameSurname,
               country: racun.country,
               status: "duplicate",
@@ -43,7 +43,7 @@ const bulkPullRacunController = async (req: Request, res: Response, next: NextFu
 
           return {
             receiptNumber: racun.receiptNumber,
-            shippmentNumber: racun.shipmentNumber,
+            shipmentNumber: racun.shipmentNumber,
             nameSurname: racun.nameSurname,
             country: racun.country,
             status: "error",

@@ -4,7 +4,6 @@ import racuniAdminController from "../controllers/racuniAdmin.js";
 const router = express.Router();
 
 router.get("/", racuniAdminController.getAllRacuniController);
-router.get("/count", racuniAdminController.getAllRacuniCountController);
 router.get("/:brojRacuna", racuniAdminController.getRacunController);
 router.post("/", racuniAdminController.createRacunController);
 router.put("/:brojRacuna", racuniAdminController.updateRacunController);

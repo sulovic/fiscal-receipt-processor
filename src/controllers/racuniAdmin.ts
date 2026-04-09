@@ -71,77 +71,14 @@ const getAllRacuniController = async (req: Request, res: Response, next: NextFun
       AND: [...andConditions, orConditions.length > 0 ? { OR: orConditions } : {}],
     };
 
-    const receipts = await racuniModel.getAllReceipts({
+    const { receipts, count } = await racuniModel.getAllReceipts({
       whereClause,
       orderBy,
       take,
       skip,
     });
 
-    return res.status(200).json({ data: receipts });
-  } catch (err) {
-    next(err);
-  }
-};
-
-const getAllRacuniCountController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const queryParams = queryParamsSchema.parse(req?.query);
-
-    const { search, filters } = queryParams;
-
-    const andConditions: Prisma.FiscalReceiptWhereInput[] = [];
-    const orConditions: Prisma.FiscalReceiptWhereInput[] = [];
-
-    // match the allowed filters above
-    const filterKeys = ["country", "receiptIssueDate"];
-    const searchKeys = ["nameSurname", "shipmentNumber", "receiptNumber", "address", "phoneNumber", "externalLink", "receiptIssueDate"];
-
-    if (filters) {
-      for (const key in filters) {
-        const value = filters[key];
-        if (!filterKeys.includes(key)) {
-          return res.status(400).json({ error: `Invalid filter key: ${key}` });
-        }
-
-        if (key === "receiptIssueDate") {
-          const startOfDay = new Date(value as string);
-          startOfDay.setHours(0, 0, 0, 0);
-
-          const nextDay = new Date(startOfDay);
-          nextDay.setDate(nextDay.getDate() + 1);
-
-          const dateFilter = {
-            receiptIssueDate: {
-              gte: startOfDay,
-              lt: nextDay,
-            },
-          };
-
-          andConditions.push(dateFilter);
-        } else {
-          andConditions.push({ [key]: { in: Array.isArray(value) ? value : [value] } });
-        }
-      }
-    }
-
-    if (search) {
-      orConditions.push(
-        ...searchKeys.map((key) => ({
-          [key]: {
-            contains: search,
-            mode: "insensitive",
-          },
-        })),
-      );
-    }
-
-    const whereClause = {
-      AND: [...andConditions, orConditions.length > 0 ? { OR: orConditions } : {}],
-    };
-
-    const reklamacijeCount = await racuniModel.getAllReceiptsCount({ whereClause });
-    return res.status(200).json({ count: reklamacijeCount });
+    return res.status(200).json({ data: receipts, count });
   } catch (err) {
     next(err);
   }
@@ -215,7 +152,6 @@ const deleteRacunController = async (req: Request, res: Response, next: NextFunc
 
 export default {
   getAllRacuniController,
-  getAllRacuniCountController,
   getRacunController,
   createRacunController,
   updateRacunController,

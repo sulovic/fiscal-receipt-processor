@@ -61,6 +61,6 @@ ENV PORT=$PORT
 
 EXPOSE $PORT
 
-CMD ["sh", "-c", "pm2-runtime ./dist/server.js --name fiscal-receipt-processor"]
+# CMD ["sh", "-c", "pm2-runtime ./dist/server.js --name fiscal-receipt-processor"]
 
-#CMD ["sh", "-c", "npx prisma migrate deploy && pm2-runtime ./dist/server.js --name fiscal-receipt-processor"]
+CMD ["sh", "-c", "npx prisma migrate deploy && pm2-runtime ./dist/server.js --name fiscal-receipt-processor"]

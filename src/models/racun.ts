@@ -10,18 +10,19 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 const getAllReceipts = async ({ whereClause, orderBy, take, skip }: { whereClause?: Prisma.FiscalReceiptWhereInput; orderBy?: Prisma.FiscalReceiptOrderByWithRelationInput; take?: number; skip?: number }) => {
-  return await prisma.fiscalReceipt.findMany({
-    where: { ...whereClause },
-    orderBy: orderBy,
-    take: take,
-    skip: skip,
-  });
-};
+  const [receipts, count] = await prisma.$transaction([
+    prisma.fiscalReceipt.findMany({
+      where: { ...whereClause },
+      orderBy,
+      take,
+      skip,
+    }),
+    prisma.fiscalReceipt.count({
+      where: { ...whereClause },
+    }),
+  ]);
 
-const getAllReceiptsCount = async ({ whereClause }: { whereClause?: Prisma.FiscalReceiptWhereInput }) => {
-  return await prisma.fiscalReceipt.count({
-    where: { ...whereClause },
-  });
+  return { receipts, count };
 };
 
 const getReceipt = async (receiptNumber: string) => {
@@ -57,7 +58,6 @@ const deleteReceipt = async (receiptNumber: string) => {
 
 export default {
   getAllReceipts,
-  getAllReceiptsCount,
   getReceipt,
   createReceipt,
   updateReceipt,
