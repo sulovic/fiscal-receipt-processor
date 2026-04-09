@@ -48,6 +48,9 @@ RUN npm ci --omit=dev
 # Copy prisma migrations
 COPY --from=builder /usr/src/app/prisma ./prisma
 
+# Copy prisma config
+COPY --from=builder /usr/src/app/prisma.config.js ./
+
 # Copy built output
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/src/generated ./dist/generated
