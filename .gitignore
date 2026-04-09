@@ -1,12 +1,12 @@
 # Ignore environment variables
-.env
+.env*
+!.env.example
 
 # Ignore node_modules
 node_modules
 
-# Ignore Prisma client and migrations
-prisma/client
-prisma/migrations
+# Ignore generated Prisma client
+src/generated/prisma
 
 # Ignore Logs
 logs
@@ -15,7 +15,3 @@ logs
 # Build directories
 dist
 build
-
-/src/generated/prisma
-
-/src/generated/prisma
