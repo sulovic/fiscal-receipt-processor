@@ -34,9 +34,9 @@ app.use(cookieParser());
 
 // Global rate limiter
 app.use(rateLimiter(1, 100));
-app.use("/bulk-pull", verifyAccessToken, bulkPullRacunRouter);
-app.use("/bulk-upload", verifySecretKey, bulkUploadRacunRouter);
-app.use("/racuni-admin", verifyAccessToken, checkUserRole, racuniAdminRouter);
+app.use("/api/vi/racuni/bulk-pull", verifyAccessToken, bulkPullRacunRouter);
+app.use("/api/vi/racuni/bulk-upload", verifySecretKey, bulkUploadRacunRouter);
+app.use("/api/vi/racuni/racuni-admin", verifyAccessToken, checkUserRole, racuniAdminRouter);
 
 app.use("/", racunRouter);
 

@@ -8,11 +8,19 @@ usersRoles: {
 */
 
 const priviledgesConfig = {
-  "racuni-admin": {
-    GET: 1000,
-    POST: 3000,
-    PUT: 3000,
-    DELETE: 5000,
+  racuni: {
+    "racuni-admin": {
+      GET: 1000,
+      POST: 3000,
+      PUT: 3000,
+      DELETE: 5000,
+    },
+    "bulk-pull": {
+      GET: 1000,
+    },
+    "bulk-upload": {
+      GET: 1000,
+    },
   },
 };
 
