@@ -1,4 +1,4 @@
-import { fiscalReceiptSchema, userDataSchema, envSchema, jwtPayloadSchema, uploadFRResultSchema, queryParamsSchema } from "../schemas/schemas";
+import { fiscalReceiptSchema, userDataSchema, envSchema, jwtPayloadSchema, uploadFRResultSchema, queryParamsSchema } from "../schemas/schemas.js";
 
 declare global {
   type Env = z.infer<typeof envSchema>;

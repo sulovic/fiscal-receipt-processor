@@ -2,6 +2,7 @@ import racunModel from "../models/racun.js";
 import type { Request, Response, NextFunction } from "express";
 import { fiscalReceiptSchema } from "../schemas/schemas.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { count } from "node:console";
 
 const bulkPullRacunController = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
@@ -24,28 +25,19 @@ const bulkPullRacunController = async (req: Request, res: Response, next: NextFu
           const created = await racunModel.createReceipt(parsedRacun);
 
           return {
-            receiptNumber: created.receiptNumber,
-            shipmentNumber: created.shipmentNumber,
-            nameSurname: created.nameSurname,
-            country: created.country,
+            ...created,
             status: "success",
           };
         } catch (error: any) {
           if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
             return {
-              receiptNumber: racun.receiptNumber,
-              shipmentNumber: racun.shipmentNumber,
-              nameSurname: racun.nameSurname,
-              country: racun.country,
+              ...racun,
               status: "duplicate",
             };
           }
 
           return {
-            receiptNumber: racun.receiptNumber,
-            shipmentNumber: racun.shipmentNumber,
-            nameSurname: racun.nameSurname,
-            country: racun.country,
+            ...racun,
             status: "error",
             message: error instanceof Error ? error.message : "Unknown error",
           };
@@ -53,7 +45,7 @@ const bulkPullRacunController = async (req: Request, res: Response, next: NextFu
       }),
     );
 
-    return res.status(207).json(uploadResults);
+    return res.status(207).json({ data: uploadResults, count: uploadResults.length });
   } catch (err) {
     next(err);
   }

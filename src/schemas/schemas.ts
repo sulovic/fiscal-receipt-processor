@@ -38,6 +38,7 @@ export const fiscalReceiptSchema = z.object({
 export const uploadFRResultSchema = z.object({
   receiptNumber: z.string(),
   status: z.enum(["success", "duplicate", "error"]),
+  message: z.string().optional(),
 });
 
 export const userDataSchema = z.object({
