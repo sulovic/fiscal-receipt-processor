@@ -124,7 +124,7 @@ const updateRacunController = async (req: Request, res: Response, next: NextFunc
       return res.status(400).json({ error: "Nije poslat broj računa" });
     }
 
-    const parsedReceipt = fiscalReceiptSchema.omit({ id: true, dateReceiptCollected: true, dateSent: true }).parse(req.body);
+    const parsedReceipt = fiscalReceiptSchema.omit({ id: true, dateReceiptCollected: true, dateSent: true }).partial().parse(req.body);
 
     const updatedReceipt = await racuniModel.updateReceipt(receiptNumber, parsedReceipt);
 

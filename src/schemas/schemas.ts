@@ -35,8 +35,7 @@ export const fiscalReceiptSchema = z.object({
   dateSent: z.coerce.date().optional(),
 });
 
-export const uploadFRResultSchema = z.object({
-  receiptNumber: z.string(),
+export const uploadFRResultSchema = fiscalReceiptSchema.extend({
   status: z.enum(["success", "duplicate", "error"]),
   message: z.string().optional(),
 });
